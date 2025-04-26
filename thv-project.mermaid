@@ -1,0 +1,67 @@
+flowchart TD
+    start([Mulai Proyek THV]) --> frontend
+
+    subgraph frontend["1. Frontend"]
+        lint["Linting & formatting (ESLint + Prettier)"]
+        resp["Responsiveness & aksesibilitas dasar"]
+        env["Env var untuk base-URL back-end"]
+        lint --> resp --> env
+    end
+
+    frontend --> backend
+    subgraph backend["2. Back-end (FastAPI)"]
+        schema["Validasi & Pydantic schemas"]
+        rate["Rate-limiting (Redis)"]
+        swagger["Swagger & ReDoc"]
+        unit["Unit-test (PyTest)"]
+        schema --> rate --> swagger --> unit
+    end
+
+    backend --> storage
+    subgraph storage["3. Storage & Media"]
+        lifecycle["Lifecycle policy Azure Blob"]
+        auth["SAS Token / Managed Identity"]
+        lifecycle --> auth
+    end
+
+    storage --> devops
+    subgraph devops["4. DevOps"]
+        envvar["Environment variables (.env)"]
+        backup["Backup rutin DB & Blob Storage"]
+        logrot["Log rotation di VM"]
+        health["Health-check endpoint + systemd watchdog"]
+        envvar --> backup --> logrot --> health
+    end
+
+    devops --> security
+    subgraph security["5. Security & Compliance"]
+        https["HTTPS redirect enforcement"]
+        csp["Content-Security-Policy di Nginx"]
+        gdpr["GDPR / kebijakan privasi"]
+        https --> csp --> gdpr
+    end
+
+    security --> monitoring
+    subgraph monitoring["6. Monitoring"]
+        alert["Alerting (Grafana/Prometheus alertmanager atau Azure Monitor)"]
+        uptime["Uptime Robot / StatusCake sederhana"]
+        alert --> uptime
+    end
+
+    monitoring --> testing
+    subgraph testing["7. Testing"]
+        integration["Integration test (FastAPI TestClient)"]
+        e2e["Front-end E2E (Playwright/Cypress)"]
+        load["Load test ringan (k6)"]
+        integration --> e2e --> load
+    end
+
+    testing --> documentation
+    subgraph documentation["8. Dokumentasi & Project Hygiene"]
+        contrib["CONTRIBUTING.md & CODE_OF_CONDUCT.md"]
+        changelog["Versi API & changelog (keep-a-changelog)"]
+        badges["Update README badges (build status, license)"]
+        contrib --> changelog --> badges
+    end
+
+    documentation --> finish([Selesai Proyek THV])
